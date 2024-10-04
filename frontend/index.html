@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acredge</title>
+    <link rel="stylesheet" href="./styles/main.css">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Acredge</div>
+            <div class="search-bar">
+                <!-- <input type="text" placeholder="Search..."> -->
+                <!-- <button type="submit"><i class="fas fa-search"></i></button> -->
+            </div>
+            <div class="nav-icons">
+                <i class="fas fa-bell"></i>
+                <i class="fas fa-comments"></i>
+                <div class="profile-dropdown">
+                    <i class="fas fa-user-circle"></i>
+                    <div class="dropdown-content">
+                        <a href="#">My Profile</a>
+                        <a href="#">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <aside class="sidebar">
+            <!-- <button class="new-listing">New Listing</button> -->
+            <div class="sidebar-menu">
+                <div class="dropdown">
+                    <button class="dropbtn">Add</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="add-developer">Developer</a>
+                        <a href="#" id="add-project">Project</a>
+                        <a href="#" id="add-tower">Tower</a>
+                        <a href="#" id="add-series">Series</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Manage</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="manage-developer">Developer</a>
+                        <a href="#" id="manage-project">Project</a>
+                        <a href="#" id="manage-tower">Tower</a>
+                        <a href="#" id="manage-series">Series</a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <section id="content">
+            <!-- Dynamic content will be loaded here -->
+        </section>
+    </main>
+    <script src="./src/main.js"></script>
+</body>
+</html>
