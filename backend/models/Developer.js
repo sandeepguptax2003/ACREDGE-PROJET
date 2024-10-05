@@ -1,24 +1,31 @@
 const admin = require('firebase-admin');
 
+// Define the Developer class
 class Developer {
+  // Constructor method that initializes a developer instance with provided data
   constructor(data) {
-    this.name = data.name;
-    this.address = data.address;
-    this.incorporationDate = data.incorporationDate;
-    this.totalProjectsDelivered = data.totalProjectsDelivered;
-    this.totalSqFtDelivered = data.totalSqFtDelivered;
-    this.reasonForChoosing = data.reasonForChoosing;
-    this.websiteLink = data.websiteLink;
-    this.status = data.status;
+    this.name = data.name;                       // Developer's name
+    this.address = data.address;                 // Developer's address
+    this.incorporationDate = data.incorporationDate; // Date of incorporation
+    this.totalProjectsDelivered = data.totalProjectsDelivered;  // Number of projects delivered
+    this.totalSqFtDelivered = data.totalSqFtDelivered; // Total square footage delivered by the developer
+    this.reasonForChoosing = data.reasonForChoosing; // Reason why the developer was chosen
+    this.websiteLink = data.websiteLink;         // Link to the developer's website
+    this.status = data.status;                   // Current status (Active/Inactive)
+    
+    // Timestamps: Use server-generated timestamps for creation and updates
     this.createdAt = data.createdAt || admin.firestore.FieldValue.serverTimestamp();
     this.updatedAt = data.updatedAt || admin.firestore.FieldValue.serverTimestamp();
   }
 
+  // Static property that defines the Firestore collection name for developers
   static collectionName = 'developers';
 
+  // Static method to validate developer data before saving
   static validate(data) {
     const errors = [];
 
+    // Validation checks for each required field and expected data types
     if (!data.name) errors.push('Developer name is required');
     if (!data.address) errors.push('Address is required');
     if (!data.incorporationDate) errors.push('Incorporation date is required');
@@ -27,9 +34,10 @@ class Developer {
     if (!data.websiteLink) errors.push('Website link is required');
     if (!['Active', 'Inactive'].includes(data.status)) errors.push('Status must be either Active or Inactive');
 
-    return errors;
+    return errors; // Return an array of validation errors
   }
 
+  // Method to convert developer instance to Firestore-compatible format
   toFirestore() {
     return {
       name: this.name,

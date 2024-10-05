@@ -1,36 +1,42 @@
 const admin = require('firebase-admin');
 
+// Define the Tower class
 class Tower {
+  // Constructor method that initializes a tower instance with the provided data
   constructor(data) {
-    this.projectId = data.projectId;
-    this.developerId = data.developerId;
-    this.towerNumber = data.towerNumber;
-    this.towerName = data.towerName;
-    this.towerPhase = data.towerPhase;
-    this.developerPhase = data.developerPhase;
-    this.phaseReraNumber = data.phaseReraNumber;
-    this.deliveryTimeline = data.deliveryTimeline;
-    this.currentStatus = data.currentStatus;
-    this.isDuplicate = data.isDuplicate;
-    this.totalFloors = data.totalFloors;
-    this.towerCore = data.towerCore;
-    this.totalApartments = data.totalApartments;
-    this.basementParkingLevels = data.basementParkingLevels;
-    this.hasStiltParking = data.hasStiltParking;
-    this.lobby = data.lobby;
-    this.hasTerrace = data.hasTerrace;
-    this.refugeArea = data.refugeArea;
-    this.exitStairs = data.exitStairs;
-    this.lifts = data.lifts;
+    this.projectId = data.projectId;                   // ID of the project to which this tower belongs
+    this.developerId = data.developerId;               // ID of the developer managing this tower
+    this.towerNumber = data.towerNumber;               // Unique number assigned to the tower
+    this.towerName = data.towerName;                   // Name of the tower
+    this.towerPhase = data.towerPhase;                 // Phase of the tower (e.g., construction phase)
+    this.developerPhase = data.developerPhase;         // Developer's phase for this tower
+    this.phaseReraNumber = data.phaseReraNumber;       // RERA number for the tower phase
+    this.deliveryTimeline = data.deliveryTimeline;     // Expected delivery timeline for the tower
+    this.currentStatus = data.currentStatus;           // Current status of the tower (e.g., under construction, completed)
+    this.isDuplicate = data.isDuplicate;               // Flag indicating if this tower is a duplicate
+    this.totalFloors = data.totalFloors;               // Total number of floors in the tower
+    this.towerCore = data.towerCore;                   // Number of cores in the tower
+    this.totalApartments = data.totalApartments;       // Total number of apartments in the tower
+    this.basementParkingLevels = data.basementParkingLevels; // Number of basement parking levels
+    this.hasStiltParking = data.hasStiltParking;       // Flag indicating if stilt parking is available
+    this.lobby = data.lobby;                           // Details of the lobby area
+    this.hasTerrace = data.hasTerrace;                 // Flag indicating if a terrace is available
+    this.refugeArea = data.refugeArea;                 // Details of the refuge area in the tower
+    this.exitStairs = data.exitStairs;                 // Number of exit stairs in the tower
+    this.lifts = data.lifts;                           // Number of lifts available in the tower
+    // Use Firestore server-generated timestamps for creation and updates if not provided
     this.createdAt = data.createdAt || admin.firestore.FieldValue.serverTimestamp();
     this.updatedAt = data.updatedAt || admin.firestore.FieldValue.serverTimestamp();
   }
 
+  // Static property that defines the Firestore collection name for towers
   static collectionName = 'towers';
 
+  // Static method to validate tower data before saving
   static validate(data) {
     const errors = [];
 
+    // Validation checks for required fields and proper data types
     if (!data.projectId) errors.push('Project ID is required');
     if (!data.developerId) errors.push('Developer ID is required');
     if (typeof data.towerNumber !== 'number') errors.push('Tower number must be a number');
@@ -46,9 +52,10 @@ class Tower {
     if (typeof data.exitStairs !== 'number') errors.push('Exit stairs must be a number');
     if (typeof data.lifts !== 'number') errors.push('Lifts must be a number');
 
-    return errors;
+    return errors; // Return an array of validation errors
   }
 
+  // Method to convert a tower instance into a Firestore-compatible format
   toFirestore() {
     return {
       projectId: this.projectId,

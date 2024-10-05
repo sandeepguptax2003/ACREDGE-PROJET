@@ -15,4 +15,7 @@ const app = admin.initializeApp({
   })
 });
 
-module.exports = { admin, db: admin.firestore() };
+module.exports = { 
+  admin, 
+  db: admin.firestore() // Firestore database instance for managing collections and documents
+};

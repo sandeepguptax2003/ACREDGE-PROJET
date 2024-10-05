@@ -1,35 +1,41 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Select the content area and the add/manage links
     const content = document.getElementById('content');
-    const addLinks = document.querySelectorAll('[id^="add-"]');
-    const manageLinks = document.querySelectorAll('[id^="manage-"]');
+    const addLinks = document.querySelectorAll('[id^="add-"]'); // Select all elements whose ID starts with 'add-'
+    const manageLinks = document.querySelectorAll('[id^="manage-"]'); // Select all elements whose ID starts with 'manage-'
 
+    // Add click event listeners to all add links
     addLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const type = e.target.id.split('-')[1];
-            loadAddForm(type);
+            e.preventDefault(); // Prevent the default anchor click behavior
+            const type = e.target.id.split('-')[1]; // Get the type from the ID
+            loadAddForm(type); // Load the corresponding add form
         });
     });
 
+    // Add click event listeners to all manage links
     manageLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const type = e.target.id.split('-')[1];
-            loadManageView(type);
+            e.preventDefault(); // Prevent the default anchor click behavior
+            const type = e.target.id.split('-')[1]; // Get the type from the ID
+            loadManageView(type); // Load the management view for the type
         });
     });
 
+    // Function to load the add form based on the type
     function loadAddForm(type) {
-        content.innerHTML = `<h2>Add ${capitalizeFirstLetter(type)}</h2>`;
-        content.innerHTML += getFormHTML(type);
-        setupFormSubmission(type);
+        content.innerHTML = `<h2>Add ${capitalizeFirstLetter(type)}</h2>`; // Set the header for the add form
+        content.innerHTML += getFormHTML(type); // Generate and add the form HTML to the content
+        setupFormSubmission(type); // Set up the form submission handler
     }
 
+    // Function to load the management view based on the type
     function loadManageView(type) {
-        content.innerHTML = `<h2>Manage ${capitalizeFirstLetter(type)}</h2>`;
-        fetchAndDisplayData(type);
+        content.innerHTML = `<h2>Manage ${capitalizeFirstLetter(type)}</h2>`; // Set the header for the management view
+        fetchAndDisplayData(type); // Fetch and display the data for the type
     }
 
+    // Function to generate the HTML for the form based on the type
     function getFormHTML(type, item = null) {
         switch (type) {
             case 'developer':
@@ -179,166 +185,132 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label for="isDuplicate">Duplicate Series:</label>
                         <input type="checkbox" id="isDuplicate" name="isDuplicate">
                         
-                        <label for="typology">Typology:</label>
-                        <select id="typology" name="typology" required>
-                            <option value="1BHK">1BHK</option>
-                            <option value="2BHK">2BHK</option>
-                            <option value="3BHK">3BHK</option>
-                            <option value="4BHK">4BHK</option>
-                        </select>
-                        
-                        <label for="bhkType">BHK Type:</label>
-                        <input type="text" id="bhkType" name="bhkType" required>
-                        
-                        <label for="addOns">Add-Ons:</label>
-                        <div id="addOns">
-                            <input type="checkbox" id="utility" name="addOns" value="Utility">
-                            <label for="utility">Utility</label>
-                            <input type="checkbox" id="terrace" name="addOns" value="Terrace">
-                            <label for="terrace">Terrace</label>
-                            <input type="checkbox" id="store" name="addOns" value="Store">
-                            <label for="store">Store</label>
-                        </div>
-                        
-                        <label for="bedrooms">Bedrooms:</label>
-                        <input type="number" id="bedrooms" name="bedrooms" required>
-                        
-                        <label for="livingDining">Living/Dining:</label>
-                        <input type="text" id="livingDining" name="livingDining" required>
-                        
-                        <label for="bathrooms">Bathrooms:</label>
-                        <input type="number" id="bathrooms" name="bathrooms" required>
-                        
-                        <label for="balconies">Balconies:</label>
-                        <input type="number" id="balconies" name="balconies" required>
-                        
-                        <label for="seriesExitDirection">Series Exit Direction:</label>
-                        <select id="seriesExitDirection" name="seriesExitDirection" required>
-                            <option value="N">North</option>
-                            <option value="E">East</option>
-                            <option value="W">West</option>
-                            <option value="S">South</option>
-                        </select>
-                        
-                        <label for="unitCarpetArea">Unit Carpet Area (sq. ft.):</label>
-                        <input type="number" id="unitCarpetArea" name="unitCarpetArea" required>
-                        
                         <button type="submit">Submit</button>
                     </form>
                 `;
             default:
-                return '<p>Invalid form type</p>';
+                return '';
         }
     }
 
-    function setupFormSubmission(type, id = null) {
-        const form = document.querySelector(`#${type}-form`);
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            
-            const url = id 
-                ? `https://acredge-projet-backend.onrender.com/api/${type}s/${id}`
-                : `https://acredge-projet-backend.onrender.com/api/${type}s`;
-            const method = id ? 'PUT' : 'POST';
-            
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-                
-                if (response.ok) {
-                    alert(`${capitalizeFirstLetter(type)} ${id ? 'updated' : 'added'} successfully!`);
-                    loadManageView(type);
-                } else {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.error}`);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the form.');
-            }
-        });
-    }
-
-    async function fetchAndDisplayData(type) {
-        try {
-            const response = await fetch(`https://acredge-projet-backend.onrender.com/api/${type}s`);
-            const data = await response.json();
-            
-            let html = `<table>
-                <thead>
-                    <tr>
-                        ${Object.keys(data[0]).map(key => `<th>${key}</th>`).join('')}
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-            
-            data.forEach(item => {
-                html += `<tr>
-                    ${Object.values(item).map(value => `<td>${value}</td>`).join('')}
-                    <td>
-                        <button onclick="editItem('${type}', '${item.id}')">Edit</button>
-                        <button onclick="deleteItem('${type}', '${item.id}')">Delete</button>
-                    </td>
-                </tr>`;
-            });
-            
-            html += `</tbody></table>`;
-            content.innerHTML += html;
-        } catch (error) {
-            console.error('Error:', error);
-            content.innerHTML += '<p>Error fetching data. Please try again later.</p>';
-        }
-    }
-
+    // Function to capitalize the first letter of a string
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    // These functions would be implemented to handle editing and deleting items
-    window.editItem = async (type, id) => {
-        try {
-            const response = await fetch(`https://acredge-projet-backend.onrender.com/api/${type}s/${id}`);
-            if (response.ok) {
-                const item = await response.json();
-                content.innerHTML = `<h2>Edit ${capitalizeFirstLetter(type)}</h2>`;
-                content.innerHTML += getFormHTML(type, item);
-                setupFormSubmission(type, id);
-            } else {
-                const errorData = await response.json();
-                alert(`Error: ${errorData.error}`);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while fetching the item data.');
-        }
-    };
+    // Function to set up form submission handling
+    function setupFormSubmission(type) {
+        const form = document.getElementById(`${type}-form`);
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(form); // Create a FormData object from the form
 
-    window.deleteItem = async (type, id) => {
-        if (confirm(`Are you sure you want to delete this ${type}?`)) {
-            try {
-                const response = await fetch(`https://acredge-projet-backend.onrender.com/api/${type}s/${id}`, {
-                    method: 'DELETE',
-                });
-                
-                if (response.ok) {
-                    alert(`${capitalizeFirstLetter(type)} deleted successfully!`);
-                    loadManageView(type);
-                } else {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.error}`);
-                }
-            } catch (error) {
+            // Perform an AJAX request to save the data
+            fetch(`/api/${type}`, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Alert the user with the response message
+                loadManageView(type); // Reload the management view
+            })
+            .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while deleting the item.');
-            }
+            });
+        });
+    }
+
+    // Function to fetch and display data based on the type
+    function fetchAndDisplayData(type) {
+        fetch(`/api/${type}`)
+            .then(response => response.json())
+            .then(data => {
+                displayData(data, type); // Display the fetched data
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    // Function to display the fetched data in a table format
+    function displayData(data, type) {
+        const table = document.createElement('table'); // Create a new table element
+        const headerRow = document.createElement('tr'); // Create a header row
+
+        // Define headers based on the type
+        let headers = [];
+        switch (type) {
+            case 'developer':
+                headers = ['Name', 'Address', 'Incorporation Date', 'Total Projects Delivered', 'Total Sq Ft Delivered', 'Reason for Choosing', 'Website Link', 'Status', 'Actions'];
+                break;
+            case 'project':
+                headers = ['Project Name', 'RERA Status', 'RERA Number', 'Starting Price', 'Media', 'Status', 'Actions'];
+                break;
+            case 'tower':
+                headers = ['Project', 'Developer', 'Tower #', 'Tower Name', 'Tower Phase', 'Delivery Timeline', 'Current Status', 'Actions'];
+                break;
+            case 'series':
+                headers = ['Tower', 'Series Name', 'Actions'];
+                break;
+            default:
+                return;
         }
-    };
+
+        // Append headers to the header row and to the table
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow); // Append the header row to the table
+
+        // Populate the table with data
+        data.forEach(item => {
+            const row = document.createElement('tr'); // Create a new row for each item
+            for (let key in item) {
+                const td = document.createElement('td'); // Create a new cell
+                td.textContent = item[key]; // Set the cell text to the item value
+                row.appendChild(td); // Append the cell to the row
+            }
+
+            // Create action buttons for each item
+            const actionTd = document.createElement('td');
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', () => {
+                loadAddForm(type, item); // Load the add form for editing
+            });
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => {
+                deleteItem(type, item.id); // Delete the item
+            });
+
+            actionTd.appendChild(editButton); // Add the edit button to the actions cell
+            actionTd.appendChild(deleteButton); // Add the delete button to the actions cell
+            row.appendChild(actionTd); // Append the actions cell to the row
+
+            table.appendChild(row); // Append the row to the table
+        });
+
+        content.innerHTML = ''; // Clear the content area
+        content.appendChild(table); // Append the populated table to the content area
+    }
+
+    // Function to delete an item
+    function deleteItem(type, id) {
+        fetch(`/api/${type}/${id}`, {
+            method: 'DELETE', // Set the method to DELETE
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message); // Alert the user with the response message
+            loadManageView(type); // Reload the management view
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
 });
