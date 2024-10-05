@@ -239,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = Object.fromEntries(formData);
             
             const url = id 
-                ? `http://localhost:4500/api/${type}s/${id}`
-                : `http://localhost:4500/api/${type}s`;
+                ? `https://acredge-projet-backend.onrender.com/api/${type}s/${id}`
+                : `https://acredge-projet-backend.onrender.com/api/${type}s`;
             const method = id ? 'PUT' : 'POST';
             
             try {
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchAndDisplayData(type) {
         try {
-            const response = await fetch(`http://localhost:4500/api/${type}s`);
+            const response = await fetch(`https://acredge-projet-backend.onrender.com/api/${type}s`);
             const data = await response.json();
             
             let html = `<table>
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // These functions would be implemented to handle editing and deleting items
     window.editItem = async (type, id) => {
         try {
-            const response = await fetch(`http://localhost:4500/api/${type}s/${id}`);
+            const response = await fetch(`https://acredge-projet-backend.onrender.com/api/${type}s/${id}`);
             if (response.ok) {
                 const item = await response.json();
                 content.innerHTML = `<h2>Edit ${capitalizeFirstLetter(type)}</h2>`;
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteItem = async (type, id) => {
         if (confirm(`Are you sure you want to delete this ${type}?`)) {
             try {
-                const response = await fetch(`http://localhost:4500/api/${type}s/${id}`, {
+                const response = await fetch(`https://acredge-projet-backend.onrender.com/api/${type}s/${id}`, {
                     method: 'DELETE',
                 });
                 
